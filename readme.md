@@ -2,7 +2,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-This repository contains the implementation of **Adaptive Ternary Quantization (ATQ)** for sustainable AI systems, as described in our research paper "Sustainable Multimodal AI via Adaptive Ternary Quantization" (2025).
+This repository contains the implementation of **Adaptive Ternary Quantization (ATQ)** for sustainable AI systems.
 
 ## Overview
 
@@ -68,11 +68,11 @@ git clone https://github.com/yourusername/atq-multimodal.git
 cd atq-multimodal
 
 # Create a virtual environment (required)
-python -m venv atq_multimodal
+python3 -m venv atq_multimodal
 source atq_multimodal/bin/activate  # On Windows: atq_multimodal\Scripts\activate
 
 # Install dependencies
-pip install -r requirements.txt
+pip3 install -r requirements.txt
 ```
 
 Make sure to create and activate the virtual environment before running any code. This ensures that all dependencies are installed in an isolated environment and don't interfere with other projects.
@@ -98,7 +98,7 @@ Fashion-MNIST consists of 60,000 training images and 10,000 test images of fashi
 To train the ATQ model on Fashion-MNIST:
 
 ```bash
-python train.py --dataset fashion_mnist --batch-size 256 --epochs 25 --use-rpb --distill --sparsity 0.3
+python3 train.py --dataset fashion_mnist --batch-size 256 --epochs 25 --use-rpb --distill --sparsity 0.3
 ```
 
 Parameters:
@@ -111,19 +111,6 @@ Parameters:
 - `--distill`: Enable knowledge distillation from baseline model
 - `--sparsity`: Target sparsity (0-1)
 
-### Evaluation
-
-To evaluate a trained model:
-
-```bash
-python evaluate.py --dataset fashion_mnist --visualize
-```
-
-Parameters:
-
-- `--dataset`: Dataset to use ('fashion_mnist' or 'mnist')
-- `--batch-size`: Batch size for evaluation
-- `--visualize`: Enable weight distribution visualization
 
 ## Extending to Multimodal
 
@@ -144,18 +131,7 @@ The training and evaluation scripts generate various visualizations:
 - **training_curve.png**: Training and validation accuracy over epochs
 - **ternary_distribution.png**: Distribution of -1, 0, and +1 weights
 
-## Citation
 
-If you use this code in your research, please cite:
-
-```bibtex
-@article{atq2025,
-  title={Sustainable Multimodal AI via Adaptive Ternary Quantization},
-  author={Your Name},
-  journal={arXiv preprint arXiv:2025.XXXXX},
-  year={2025}
-}
-```
 
 ## License
 
