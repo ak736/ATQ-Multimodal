@@ -43,13 +43,14 @@ checkpoints/*.pth
 
 # Dataset files (potentially large)
 data/FashionMNIST/
-data/MNIST/
+data/flickr8k/
 *.gz
 *.npz
 *.npy
 *.h5
 *.hdf5
-
+nltk_data/
+outputs/
 # Large log files
 logs/
 *.log

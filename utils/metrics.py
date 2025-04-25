@@ -24,22 +24,32 @@ def measure_inference_time(model, input_tensor, num_runs=50):
     
     Args:
         model: PyTorch model
-        input_tensor: Input tensor for inference
+        input_tensor: Input tensor or list of input tensors for inference
         num_runs: Number of runs to average over
         
     Returns:
         Average inference time in milliseconds
     """
     model.eval()
+    
+    # Check if input_tensor is a list/tuple or single tensor
+    is_list_input = isinstance(input_tensor, (list, tuple))
+    
     with torch.no_grad():
         # Warmup
         for _ in range(5):
-            _ = model(input_tensor)
+            if is_list_input:
+                _ = model(*input_tensor)
+            else:
+                _ = model(input_tensor)
         
         # Measure time
         start_time = time.time()
         for _ in range(num_runs):
-            _ = model(input_tensor)
+            if is_list_input:
+                _ = model(*input_tensor)
+            else:
+                _ = model(input_tensor)
         end_time = time.time()
     
     # Calculate average time in ms
