@@ -1,19 +1,22 @@
-# Adaptive Ternary Quantization (ATQ) for Sustainable AI
+# Sustainable Scaling for Multimodal AI through Adaptive Ternary Quantization
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-This repository contains the implementation of **Adaptive Ternary Quantization (ATQ)** for sustainable AI systems.
+This repository contains the implementation of **Adaptive Ternary Quantization (ATQ)** for sustainable AI systems, including multimodal learning.
 
 ## Overview
 
 ATQ is a novel quantization technique that restricts neural network weights to just three values {-1, 0, +1} while maintaining competitive accuracy. By incorporating dynamic, layer-specific thresholding, selective gradient routing, and precision-aware allocation, ATQ achieves significant memory and computational efficiency without substantial accuracy degradation.
 
+
 ### Key Features
 
-- **Extreme Memory Reduction**: 16x compression ratio with bit-packing
+- **Extreme Memory Reduction**: 8-10x compression ratio compared to full-precision models
 - **High Accuracy Retention**: 85.7% accuracy on Fashion-MNIST (just 7.3% below full-precision baseline)
 - **Progressive Sparsity**: Gradual sparsity targeting during training
 - **Residual Precision Boosting**: Selective preservation of critical weights
+- **Multimodal Support**: Extended framework for image-text multimodal tasks
+- **Mixed-Precision Allocation**: Layer-specific precision based on importance
 
 ## Results
 
@@ -22,6 +25,11 @@ Our implementation demonstrates that ATQ can achieve:
 - **85.7%** test accuracy on Fashion-MNIST (vs. 93.0% for the full-precision baseline)
 - **16x** theoretical memory reduction through bit-packing
 - **High sparsity** in quantized layers (up to 95.67% zeros in some layers)
+
+For multimodal tasks on Flickr8k dataset:
+- **Model size reduction**: 15-22MB (vs. 75-100MB for full-precision models)
+- **Inference time**: ~195-277ms per sample
+- With further optimization, potential for **15-25% Recall@1** and **40-50% Recall@5**
 
 ## Repository Structure
 
@@ -33,6 +41,7 @@ ATQ_MULTIMODAL/
 │   ├── precision_boost.py # Residual Precision Boosting
 │   ├── quantizers.py     # Adaptive ternary quantization
 │   └── routing.py        # Selective gradient routing
+│   └── mixed_precision_atq.py    # Enhanced mixed-precision ATQ
 ├── data/                 # Data handling utilities
 │   ├── datasets.py       # Dataset loading
 │   └── multimodal_data.py # Multimodal dataset handling
@@ -47,6 +56,7 @@ ATQ_MULTIMODAL/
 ├── plots/                # Generated visualizations
 ├── checkpoints/          # Saved model weights
 ├── train.py              # Training script
+├── train_multimodal.py   # Training script for multimodal
 └── evaluate.py           # Evaluation script
 ```
 
@@ -59,6 +69,7 @@ ATQ_MULTIMODAL/
 - torchvision
 - numpy
 - matplotlib
+- nltk (for text processing)
 
 ### Setup
 
@@ -81,20 +92,18 @@ Make sure to create and activate the virtual environment before running any code
 
 This implementation uses the Fashion-MNIST dataset, which will be automatically downloaded when running the training script. If you prefer to download it manually:
 
-```bash
-# Create data directory
-mkdir -p data/FashionMNIST
+### Fashion-MNIST
+This implementation uses the Fashion-MNIST dataset for single-modality experiments, which will be automatically downloaded when running the training script. 
 
-# You can then place the downloaded dataset in this directory
-# The datasets.py script will look for it before downloading
-```
+### Flickr8k
 
-Fashion-MNIST consists of 60,000 training images and 10,000 test images of fashion items, each 28x28 pixels in grayscale. More information: [Fashion-MNIST GitHub](https://github.com/zalandoresearch/fashion-mnist)
+For multimodal experiments, we use the Flickr8k dataset, which contains 8,000 images with 5 captions each. The dataset will be automatically downloaded when running the multimodal training script.
 
 ## Usage
 
 ### Training
 
+### Training Single-Modality Model
 To train the ATQ model on Fashion-MNIST:
 
 ```bash
@@ -111,26 +120,27 @@ Parameters:
 - `--distill`: Enable knowledge distillation from baseline model
 - `--sparsity`: Target sparsity (0-1)
 
+### Training Multimodal Model
+To train the ATQ multimodal model on Flickr8k:
 
-## Extending to Multimodal
+```bash
+python3 train_multimodal.py --device mps --batch-size 16 --embed-dim 192 --hidden-dim 384 --epochs 10 --learning-rate 5e-5 --image-size 160 --use-residual --reinit-model --gradual-quant --warmup-epochs 2 --contrastive-reg 0.05
+```
 
-This repository includes placeholder implementations for extending ATQ to multimodal data:
+Parameters:
 
-1. `text_encoder.py`: Framework for applying ATQ to text data
-2. `fusion.py`: Cross-modal fusion with ternary weights
-3. `multimodal_classifier.py`: Combined classifier for multiple modalities
-
-Full multimodal implementation is planned for future releases.
-
-## Visualizations
-
-The training and evaluation scripts generate various visualizations:
-
-- **accuracy_comparison.png**: Compares accuracy between models
-- **sparsity_schedule.png**: Shows progressive sparsity during training
-- **training_curve.png**: Training and validation accuracy over epochs
-- **ternary_distribution.png**: Distribution of -1, 0, and +1 weights
-
+- `--device`: Device to use ('cpu', 'cuda', 'mps')
+- `--batch-size`: Batch size for training
+- `--embed-dim`: Embedding dimension for joint space
+- `--hidden-dim`: Hidden dimension for encoders
+- `--epochs`: Number of training epochs
+- `--learning-rate`: Learning rate
+- `--image-size`: Image size for resizing
+- `--use-residual`: Enable Residual Precision Boosting
+- `--reinit-model`: Reinitialize model weights
+- `--gradual-quant`: Use gradual quantization schedule
+- `--warmup-epochs`: Number of warmup epochs
+- `--contrastive-reg`: Regularization for contrastive loss
 
 
 ## License
@@ -140,4 +150,5 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 ## Acknowledgements
 
 - Fashion-MNIST dataset by Zalando Research
+- Flickr8k dataset
 - PyTorch framework
